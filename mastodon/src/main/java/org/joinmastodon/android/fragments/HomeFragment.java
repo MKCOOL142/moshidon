@@ -15,8 +15,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.PushNotificationReceiver;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.requests.notifications.GetNotifications;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.discover.DiscoverFragment;
@@ -48,6 +50,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 	private TabBar tabBar;
 	private View tabBarWrap;
 	private ImageView tabBarAvatar;
+	private ImageView tabBarNotifications;
 	@IdRes
 	private int currentTab=R.id.tab_home;
 
@@ -96,6 +99,18 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 		tabBar=content.findViewById(R.id.tabbar);
 		tabBar.setListeners(this::onTabSelected, this::onTabLongClick);
 		tabBarWrap=content.findViewById(R.id.tabbar_wrap);
+
+		tabBarNotifications=tabBar.findViewById(R.id.tab_notifications);
+
+		if(GlobalUserPreferences.hasNotifications.get(accountID)==null) {
+			GlobalUserPreferences.hasNotifications.put(accountID, false);
+		}
+//		tabBarNotifications.setImageResource(GlobalUserPreferences.hasNotifications.get(accountID) ? R.drawable.ic_fluent_alert_28_badged_selector : R.drawable.ic_fluent_alert_28_selector);
+		if(GlobalUserPreferences.hasNotifications.get(accountID)){
+			tabBarNotifications.setImageResource(R.drawable.ic_fluent_alert_28_badged_selector);
+		}else{
+			tabBarNotifications.setImageResource(R.drawable.ic_fluent_alert_28_selector);
+		}
 
 		tabBarAvatar=tabBar.findViewById(R.id.tab_profile_ava);
 		tabBarAvatar.setOutlineProvider(new ViewOutlineProvider(){

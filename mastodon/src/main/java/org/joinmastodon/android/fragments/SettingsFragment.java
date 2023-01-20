@@ -124,6 +124,11 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			GlobalUserPreferences.save();
 			needAppRestart=true;
 		}));
+		items.add(new SwitchItem(R.string.sk_enable_new_home_layout, R.drawable.ic_fluent_home_24_regular, GlobalUserPreferences.enableNewHomeLayout, i->{
+			GlobalUserPreferences.enableNewHomeLayout=i.checked;
+			GlobalUserPreferences.save();
+			needAppRestart=true;
+		}));
 		items.add(new ButtonItem(R.string.sk_settings_color_palette, R.drawable.ic_fluent_color_24_regular, b->{
 			PopupMenu popupMenu=new PopupMenu(getActivity(), b, Gravity.CENTER_HORIZONTAL);
 			popupMenu.inflate(R.menu.color_palettes);

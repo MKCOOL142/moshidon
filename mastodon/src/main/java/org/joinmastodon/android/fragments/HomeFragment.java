@@ -16,7 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import org.joinmastodon.android.PushNotificationReceiver;
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
@@ -45,7 +45,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 
 	private HomeTabFragment homeTabFragment;
 
-//	private HomeTimelineFragment homeTimelineFragment;
+	private HomeTimelineFragment homeTimelineFragment;
 
 	private NotificationsFragment notificationsFragment;
 	private DiscoverFragment searchFragment;
@@ -71,11 +71,12 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 			Bundle args=new Bundle();
 			args.putString("account", accountID);
 
+
 			homeTabFragment=new HomeTabFragment();
 			homeTabFragment.setArguments(args);
 
-//			homeTimelineFragment=new HomeTimelineFragment();
-//			homeTimelineFragment.setArguments(args);
+			homeTimelineFragment=new HomeTimelineFragment();
+			homeTimelineFragment.setArguments(args);
 
 			args=new Bundle(args);
 			args.putBoolean("noAutoLoad", true);
@@ -124,14 +125,8 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 					.add(R.id.fragment_wrap, searchFragment).hide(searchFragment)
 					.add(R.id.fragment_wrap, notificationsFragment).hide(notificationsFragment)
 					.add(R.id.fragment_wrap, profileFragment).hide(profileFragment)
+					.add(R.id.fragment_wrap, homeTimelineFragment)
 					.commit();
-
-//			getChildFragmentManager().beginTransaction()
-//					.add(R.id.fragment_wrap, homeTimelineFragment)
-//					.add(R.id.fragment_wrap, searchFragment).hide(searchFragment)
-//					.add(R.id.fragment_wrap, notificationsFragment).hide(notificationsFragment)
-//					.add(R.id.fragment_wrap, profileFragment).hide(profileFragment)
-//					.commit();
 
 			String defaultTab=getArguments().getString("tab");
 			if("notifications".equals(defaultTab)){
@@ -154,14 +149,12 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 	public void onViewStateRestored(Bundle savedInstanceState){
 		super.onViewStateRestored(savedInstanceState);
 
-		if(savedInstanceState==null) return;
-
-//		if(savedInstanceState==null || homeTimelineFragment!=null)
-//			return;
+		if(savedInstanceState==null || homeTimelineFragment!=null)
+			return;
 
 		homeTabFragment=(HomeTabFragment) getChildFragmentManager().getFragment(savedInstanceState, "homeTabFragment");
 
-//		homeTimelineFragment=(HomeTimelineFragment) getChildFragmentManager().getFragment(savedInstanceState, "homeTimelineFragment");
+		homeTimelineFragment=(HomeTimelineFragment) getChildFragmentManager().getFragment(savedInstanceState, "homeTimelineFragment");
 		searchFragment=(DiscoverFragment) getChildFragmentManager().getFragment(savedInstanceState, "searchFragment");
 		notificationsFragment=(NotificationsFragment) getChildFragmentManager().getFragment(savedInstanceState, "notificationsFragment");
 		profileFragment=(ProfileFragment) getChildFragmentManager().getFragment(savedInstanceState, "profileFragment");
@@ -173,6 +166,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 				.hide(searchFragment)
 				.hide(notificationsFragment)
 				.hide(profileFragment)
+				.hide(homeTimelineFragment)
 				.show(current)
 				.commit();
 
@@ -213,9 +207,11 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 		}
 		WindowInsets topOnlyInsets=insets.replaceSystemWindowInsets(0, insets.getSystemWindowInsetTop(), 0, 0);
 
-		homeTabFragment.onApplyWindowInsets(topOnlyInsets);
-
-//		homeTimelineFragment.onApplyWindowInsets(topOnlyInsets);
+		if(GlobalUserPreferences.enableNewHomeLayout){
+			homeTabFragment.onApplyWindowInsets(topOnlyInsets);
+		}else{
+			homeTimelineFragment.onApplyWindowInsets(topOnlyInsets);
+		}
 
 		searchFragment.onApplyWindowInsets(topOnlyInsets);
 		notificationsFragment.onApplyWindowInsets(topOnlyInsets);
@@ -224,10 +220,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 
 	private Fragment fragmentForTab(@IdRes int tab){
 		if(tab==R.id.tab_home){
-			return homeTabFragment;
-
-		//		if(tab==R.id.tab_home){
-//			return homeTimelineFragment;
+			return GlobalUserPreferences.enableNewHomeLayout ? homeTabFragment : homeTimelineFragment;
 		}else if(tab==R.id.tab_search){
 			return searchFragment;
 		}else if(tab==R.id.tab_notifications){
@@ -317,7 +310,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 	public void onSaveInstanceState(Bundle outState){
 		super.onSaveInstanceState(outState);
 		outState.putInt("selectedTab", currentTab);
-
+		if (homeTimelineFragment.isAdded()) getChildFragmentManager().putFragment(outState, "homeTimelineFragment", homeTimelineFragment);
 		if (homeTabFragment.isAdded()) getChildFragmentManager().putFragment(outState, "homeTabFragment", homeTabFragment);
 		if (searchFragment.isAdded()) getChildFragmentManager().putFragment(outState, "searchFragment", searchFragment);
 		if (notificationsFragment.isAdded()) getChildFragmentManager().putFragment(outState, "notificationsFragment", notificationsFragment);

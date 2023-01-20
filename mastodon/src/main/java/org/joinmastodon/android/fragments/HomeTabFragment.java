@@ -109,7 +109,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			args.putString("account", accountID);
 			args.putBoolean("__is_tab", true);
 
-			fragments.add(new HomeTimelineFragment());
+			fragments.add(new HomeTimelineFragmentNew());
 			fragments.add(new LocalTimelineFragment());
 			if (showFederatedTimeline) fragments.add(new FederatedTimelineFragment());
 			args=new Bundle(args);

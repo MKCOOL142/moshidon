@@ -70,11 +70,11 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 		if(savedInstanceState==null){
 			Bundle args=new Bundle();
 			args.putString("account", accountID);
-
-
 			homeTabFragment=new HomeTabFragment();
 			homeTabFragment.setArguments(args);
 
+			args=new Bundle(args);
+			args.putString("account", accountID);
 			homeTimelineFragment=new HomeTimelineFragment();
 			homeTimelineFragment.setArguments(args);
 
@@ -121,11 +121,10 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 
 		if(savedInstanceState==null){
 			getChildFragmentManager().beginTransaction()
-					.add(R.id.fragment_wrap, homeTabFragment)
+					.add(R.id.fragment_wrap, GlobalUserPreferences.enableNewHomeLayout ? homeTabFragment : homeTimelineFragment)
 					.add(R.id.fragment_wrap, searchFragment).hide(searchFragment)
 					.add(R.id.fragment_wrap, notificationsFragment).hide(notificationsFragment)
 					.add(R.id.fragment_wrap, profileFragment).hide(profileFragment)
-					.add(R.id.fragment_wrap, homeTimelineFragment)
 					.commit();
 
 			String defaultTab=getArguments().getString("tab");
@@ -155,6 +154,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 		homeTabFragment=(HomeTabFragment) getChildFragmentManager().getFragment(savedInstanceState, "homeTabFragment");
 
 		homeTimelineFragment=(HomeTimelineFragment) getChildFragmentManager().getFragment(savedInstanceState, "homeTimelineFragment");
+
 		searchFragment=(DiscoverFragment) getChildFragmentManager().getFragment(savedInstanceState, "searchFragment");
 		notificationsFragment=(NotificationsFragment) getChildFragmentManager().getFragment(savedInstanceState, "notificationsFragment");
 		profileFragment=(ProfileFragment) getChildFragmentManager().getFragment(savedInstanceState, "profileFragment");
@@ -310,7 +310,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 	public void onSaveInstanceState(Bundle outState){
 		super.onSaveInstanceState(outState);
 		outState.putInt("selectedTab", currentTab);
-		if (homeTimelineFragment.isAdded()) getChildFragmentManager().putFragment(outState, "homeTimelineFragment", homeTimelineFragment);
+		if (homeTimelineFragment.isAdded()) getChildFragmentManager().putFragment(outState, "homeTabFragment", homeTimelineFragment);
 		if (homeTabFragment.isAdded()) getChildFragmentManager().putFragment(outState, "homeTabFragment", homeTabFragment);
 		if (searchFragment.isAdded()) getChildFragmentManager().putFragment(outState, "searchFragment", searchFragment);
 		if (notificationsFragment.isAdded()) getChildFragmentManager().putFragment(outState, "notificationsFragment", notificationsFragment);

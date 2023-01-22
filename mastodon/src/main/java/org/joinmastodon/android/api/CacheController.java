@@ -157,7 +157,7 @@ public class CacheController{
 							return;
 						}
 					}catch(IOException x){
-						Log.w(TAG, "getHomeTimeline: corrupted status object in database", x);
+						Log.w(TAG, "getConversationsTimeline: corrupted status object in database", x);
 					}
 				}
 				new GetConversationsTimeline(maxID, null, count, null)
@@ -393,15 +393,18 @@ public class CacheController{
 						)""");
 			createRecentSearchesTable(db);
 			createPostsNotificationsTable(db);
+			createConversationsTimelineTable(db);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
 			if(oldVersion==1){
 				createRecentSearchesTable(db);
+				createConversationsTimelineTable(db);
 			}
 			if(oldVersion==2){
 				createPostsNotificationsTable(db);
+				createConversationsTimelineTable(db);
 			}
 		}
 
@@ -421,6 +424,15 @@ public class CacheController{
 							`json` TEXT NOT NULL,
 							`flags` INTEGER NOT NULL DEFAULT 0,
 							`type` INTEGER NOT NULL
+						)""");
+		}
+
+		private void createConversationsTimelineTable(SQLiteDatabase db){
+			db.execSQL("""
+						CREATE TABLE `conversations_timeline` (
+							`id` VARCHAR(25) NOT NULL PRIMARY KEY,
+							`json` TEXT NOT NULL,
+							`flags` INTEGER NOT NULL DEFAULT 0
 						)""");
 		}
 	}

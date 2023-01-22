@@ -92,7 +92,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		} else if (item.getItemId() == R.id.clear_notifications) {
 			UiUtils.confirmDeleteNotification(getActivity(), accountID, null, ()->{
 				for (int i = 0; i < tabViews.length; i++) {
-					getFragmentForPage(i).reload();
+//					getFragmentForPage(i).reload();
 				}
 			});
 			return true;
@@ -202,7 +202,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 
 	@Override
 	public void scrollToTop(){
-		getFragmentForPage(pager.getCurrentItem()).scrollToTop();
+//		getFragmentForPage(pager.getCurrentItem()).scrollToTop();
 	}
 
 	public void loadData(){

@@ -20,8 +20,6 @@ import org.joinmastodon.android.api.requests.accounts.GetFollowRequests;
 import org.joinmastodon.android.events.FollowRequestHandledEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.HeaderPaginationList;
-import org.joinmastodon.android.model.Notification;
-import org.joinmastodon.android.model.Token;
 import org.joinmastodon.android.ui.SimpleViewHolder;
 import org.joinmastodon.android.ui.tabs.TabLayout;
 import org.joinmastodon.android.ui.tabs.TabLayoutMediator;
@@ -46,9 +44,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	private FrameLayout[] tabViews;
 	private TabLayoutMediator tabLayoutMediator;
 
-	private NotificationsListFragment allNotificationsFragment, mentionsFragment;
-
-	private ConversationsTimelineFragment conversationsTimelineFragment;
+	private NotificationsListFragment allNotificationsFragment, mentionsFragment, conversationsFragment;
 
 	private String accountID;
 
@@ -92,7 +88,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		} else if (item.getItemId() == R.id.clear_notifications) {
 			UiUtils.confirmDeleteNotification(getActivity(), accountID, null, ()->{
 				for (int i = 0; i < tabViews.length; i++) {
-//					getFragmentForPage(i).reload();
+					getFragmentForPage(i).reload();
 				}
 			});
 			return true;
@@ -155,14 +151,14 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 			mentionsFragment.setArguments(args);
 
 			args=new Bundle(args);
-			args.putBoolean("onlyPosts", true);
-			conversationsTimelineFragment=new ConversationsTimelineFragment();
-			conversationsTimelineFragment.setArguments(args);
+			args.putBoolean("onlyConversations", true);
+			conversationsFragment =new NotificationsListFragment();
+			conversationsFragment.setArguments(args);
 
 			getChildFragmentManager().beginTransaction()
 					.add(R.id.notifications_all, allNotificationsFragment)
 					.add(R.id.notifications_mentions, mentionsFragment)
-					.add(R.id.notifications_posts, conversationsTimelineFragment)
+					.add(R.id.notifications_posts, conversationsFragment)
 					.commit();
 		}
 
@@ -172,7 +168,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 				tab.setText(switch(position){
 					case 0 -> R.string.all_notifications;
 					case 1 -> R.string.mentions;
-					case 2 -> R.string.sk_conversations;
+					case 2 -> R.string.posts;
 					default -> throw new IllegalStateException("Unexpected value: "+position);
 				});
 				tab.view.textView.setAllCaps(true);
@@ -202,7 +198,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 
 	@Override
 	public void scrollToTop(){
-//		getFragmentForPage(pager.getCurrentItem()).scrollToTop();
+		getFragmentForPage(pager.getCurrentItem()).scrollToTop();
 	}
 
 	public void loadData(){
@@ -217,11 +213,11 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		getToolbar().setOutlineProvider(null);
 	}
 
-	private Fragment getFragmentForPage(int page){
+	private NotificationsListFragment getFragmentForPage(int page){
 		return switch(page){
 			case 0 -> allNotificationsFragment;
 			case 1 -> mentionsFragment;
-			case 2 -> conversationsTimelineFragment;
+			case 2 -> conversationsFragment;
 			default -> throw new IllegalStateException("Unexpected value: "+page);
 		};
 	}

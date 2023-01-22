@@ -168,7 +168,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 				tab.setText(switch(position){
 					case 0 -> R.string.all_notifications;
 					case 1 -> R.string.mentions;
-					case 2 -> R.string.posts;
+					case 2 -> R.string.sk_conversations;
 					default -> throw new IllegalStateException("Unexpected value: "+position);
 				});
 				tab.view.textView.setAllCaps(true);

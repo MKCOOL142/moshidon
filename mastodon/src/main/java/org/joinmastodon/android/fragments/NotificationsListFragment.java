@@ -11,17 +11,21 @@ import com.squareup.otto.Subscribe;
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.markers.SaveMarkers;
+import org.joinmastodon.android.api.requests.timelines.GetConversationsTimeline;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.PollUpdatedEvent;
 import org.joinmastodon.android.events.RemoveAccountPostsEvent;
+import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.model.StatusPrivacy;
 import org.joinmastodon.android.ui.displayitems.AccountCardStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.HeaderStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.ImageStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
 import org.joinmastodon.android.ui.utils.InsetStatusItemDecoration;
+import org.joinmastodon.android.utils.StatusFilterPredicate;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -34,6 +38,8 @@ import java.util.stream.Stream;
 
 import androidx.recyclerview.widget.RecyclerView;
 import me.grishka.appkit.Nav;
+import me.grishka.appkit.api.Callback;
+import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.utils.V;
 
@@ -113,28 +119,29 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 
 	@Override
 	protected void doLoadData(int offset, int count){
-		AccountSessionManager.getInstance()
-				.getAccount(accountID).getCacheController()
-				.getNotifications(offset>0 ? maxID : null, count, onlyMentions, onlyPosts, refreshing, new SimpleCallback<>(this){
-					@Override
-					public void onSuccess(PaginatedResponse<List<Notification>> result){
-						if(getActivity()==null)
-							return;
-						if(refreshing)
-							relationships.clear();
-						onDataLoaded(result.items.stream().filter(n->n.type!=null).collect(Collectors.toList()), !result.items.isEmpty());
-						Set<String> needRelationships=result.items.stream()
-								.filter(ntf->ntf.status==null && !relationships.containsKey(ntf.account.id))
-								.map(ntf->ntf.account.id)
-								.collect(Collectors.toSet());
-						loadRelationships(needRelationships);
-						maxID=result.maxID;
+			AccountSessionManager.getInstance()
+					.getAccount(accountID).getCacheController()
+					.getNotifications(offset > 0 ? maxID : null, count, onlyMentions, onlyPosts || onlyConversations, refreshing, new SimpleCallback<>(this) {
+						@Override
+						public void onSuccess(PaginatedResponse<List<Notification>> result) {
+							if (getActivity() == null)
+								return;
+							if (refreshing)
+								relationships.clear();
+							onDataLoaded(result.items.stream().filter(n -> n.type != null || (onlyConversations &&)).collect(Collectors.toList()), !result.items.isEmpty());
+							Set<String> needRelationships = result.items.stream()
+									.filter(ntf -> ntf.status == null && !relationships.containsKey(ntf.account.id))
+									.map(ntf -> ntf.account.id)
+									.collect(Collectors.toSet());
+							loadRelationships(needRelationships);
+							maxID = result.maxID;
 
-						if(offset==0 && !result.items.isEmpty()){
-							new SaveMarkers(null, result.items.get(0).id).exec(accountID);
+							if (offset == 0 && !result.items.isEmpty()) {
+								new SaveMarkers(null, result.items.get(0).id).exec(accountID);
+							}
 						}
-					}
-				});
+					});
+
 	}
 
 	@Override

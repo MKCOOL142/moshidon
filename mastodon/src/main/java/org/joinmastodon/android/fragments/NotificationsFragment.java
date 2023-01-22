@@ -20,6 +20,8 @@ import org.joinmastodon.android.api.requests.accounts.GetFollowRequests;
 import org.joinmastodon.android.events.FollowRequestHandledEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.HeaderPaginationList;
+import org.joinmastodon.android.model.Notification;
+import org.joinmastodon.android.model.Token;
 import org.joinmastodon.android.ui.SimpleViewHolder;
 import org.joinmastodon.android.ui.tabs.TabLayout;
 import org.joinmastodon.android.ui.tabs.TabLayoutMediator;
@@ -44,7 +46,9 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	private FrameLayout[] tabViews;
 	private TabLayoutMediator tabLayoutMediator;
 
-	private NotificationsListFragment allNotificationsFragment, mentionsFragment, postsFragment;
+	private NotificationsListFragment allNotificationsFragment, mentionsFragment;
+
+	private ConversationsTimelineFragment conversationsTimelineFragment;
 
 	private String accountID;
 
@@ -152,13 +156,13 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 
 			args=new Bundle(args);
 			args.putBoolean("onlyPosts", true);
-			postsFragment=new NotificationsListFragment();
-			postsFragment.setArguments(args);
+			conversationsTimelineFragment=new ConversationsTimelineFragment();
+			conversationsTimelineFragment.setArguments(args);
 
 			getChildFragmentManager().beginTransaction()
 					.add(R.id.notifications_all, allNotificationsFragment)
 					.add(R.id.notifications_mentions, mentionsFragment)
-					.add(R.id.notifications_posts, postsFragment)
+					.add(R.id.notifications_posts, conversationsTimelineFragment)
 					.commit();
 		}
 
@@ -168,7 +172,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 				tab.setText(switch(position){
 					case 0 -> R.string.all_notifications;
 					case 1 -> R.string.mentions;
-					case 2 -> R.string.posts;
+					case 2 -> R.string.sk_conversations;
 					default -> throw new IllegalStateException("Unexpected value: "+position);
 				});
 				tab.view.textView.setAllCaps(true);
@@ -213,11 +217,11 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		getToolbar().setOutlineProvider(null);
 	}
 
-	private NotificationsListFragment getFragmentForPage(int page){
+	private Fragment getFragmentForPage(int page){
 		return switch(page){
 			case 0 -> allNotificationsFragment;
 			case 1 -> mentionsFragment;
-			case 2 -> postsFragment;
+			case 2 -> conversationsTimelineFragment;
 			default -> throw new IllegalStateException("Unexpected value: "+page);
 		};
 	}

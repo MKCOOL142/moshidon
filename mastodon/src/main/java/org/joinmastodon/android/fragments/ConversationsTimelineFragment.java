@@ -15,6 +15,7 @@ import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.model.StatusPrivacy;
 import org.joinmastodon.android.ui.displayitems.GapStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
@@ -43,18 +44,17 @@ public class ConversationsTimelineFragment extends FabStatusListFragment {
 
     private List<Status> filterPosts(List<Status> items) {
 //        Disabling this for DMs, because there are no boosts on DMs, and most of them are replies
-//        return items.stream().filter(i ->
-//                (GlobalUserPreferences.showReplies || i.inReplyToId == null) &&
-//                        (GlobalUserPreferences.showBoosts || i.reblog == null)
-//        ).collect(Collectors.toList());
-        return items;
+        return items.stream().filter(i ->
+                (i.visibility == StatusPrivacy.DIRECT)
+        ).collect(Collectors.toList());
+//        return items;
     }
 
     @Override
     protected void doLoadData(int offset, int count){
         AccountSessionManager.getInstance()
                 .getAccount(accountID).getCacheController()
-                .getConversationsTimeline(offset>0 ? maxID : null, count, refreshing, new SimpleCallback<>(this){
+                .getHomeTimeline(offset>0 ? maxID : null, count, refreshing, new SimpleCallback<>(this){
                     @Override
                     public void onSuccess(CacheablePaginatedResponse<List<Status>> result){
                         if(getActivity()==null)
@@ -127,7 +127,7 @@ public class ConversationsTimelineFragment extends FabStatusListFragment {
                         if(!toAdd.isEmpty()){
                             prependItems(toAdd, true);
                             if (parent != null) parent.showNewPostsButton();
-                            AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putConversationsTimeline(toAdd, false);
+//                            AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putHomTimeline(toAdd, false);
                         }
                     }
 
@@ -166,7 +166,7 @@ public class ConversationsTimelineFragment extends FabStatusListFragment {
                             Status gapStatus=getStatusByID(gap.parentID);
                             if(gapStatus!=null){
                                 gapStatus.hasGapAfter=false;
-                                AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putConversationsTimeline(Collections.singletonList(gapStatus), false);
+//                                AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putConversationsTimeline(Collections.singletonList(gapStatus), false);
                             }
                         }else{
                             Set<String> idsBelowGap=new HashSet<>();
@@ -178,7 +178,7 @@ public class ConversationsTimelineFragment extends FabStatusListFragment {
                                 }else if(s.id.equals(gap.parentID)){
                                     belowGap=true;
                                     s.hasGapAfter=false;
-                                    AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putConversationsTimeline(Collections.singletonList(s), false);
+//                                    AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putConversationsTimeline(Collections.singletonList(s), false);
                                 }else{
                                     gapPostIndex++;
                                 }
@@ -213,7 +213,7 @@ public class ConversationsTimelineFragment extends FabStatusListFragment {
                                 adapter.notifyItemChanged(getMainAdapterOffset()+gapPos);
                                 adapter.notifyItemRangeInserted(getMainAdapterOffset()+gapPos+1, targetList.size()-1);
                             }
-                            AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putConversationsTimeline(insertedPosts, false);
+//                            AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putConversationsTimeline(insertedPosts, false);
                         }
                     }
 

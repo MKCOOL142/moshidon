@@ -73,7 +73,7 @@ public class CacheController{
 								status.hasGapAfter=((flags & POST_FLAG_GAP_AFTER)!=0);
 								newMaxID=status.id;
 								for(Filter filter:filters){
-									if(filter.matches(status))
+									if(filter.matches(status) && status.filterRevealed)
 										continue outer;
 								}
 								result.add(status);

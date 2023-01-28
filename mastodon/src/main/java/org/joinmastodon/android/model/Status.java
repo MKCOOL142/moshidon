@@ -149,6 +149,10 @@ public class Status extends BaseModel implements DisplayItemsParent{
 		return strippedText;
 	}
 
+	public void setFilterRevealed(boolean filterRevealed) {
+		this.filterRevealed = filterRevealed;
+	}
+
 	public static Status ofFake(String id, String text, Instant createdAt) {
 		Status s = new Status();
 		s.id = id;

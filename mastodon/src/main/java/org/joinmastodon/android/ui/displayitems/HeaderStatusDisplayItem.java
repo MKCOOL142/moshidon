@@ -293,25 +293,16 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 
 		@Override
 		public void onBind(HeaderStatusDisplayItem item){
+			if(item.status.filterRevealed){
+
+			}
+
 			name.setText(item.parsedName);
 			username.setText('@'+item.user.acct);
 			botIcon.setVisibility(item.user.bot ? View.VISIBLE : View.GONE);
 			botIcon.setColorFilter(username.getCurrentTextColor());
 			separator.setVisibility(View.VISIBLE);
 
-//			if(item.user.bot){
-//				SpannableStringBuilder ssb = new SpannableStringBuilder();
-//				ssb.append('@'+item.user.acct);
-//				ssb.append(" ");
-//				Drawable botIcon=username.getResources().getDrawable(R.drawable.ic_bot, itemView.getContext().getTheme()).mutate();
-//				botIcon.setBounds(0, 0, botIcon.getIntrinsicWidth(), botIcon.getIntrinsicHeight());
-//				botIcon.setTint(username.getCurrentTextColor());
-//				ssb.append(itemView.getContext().getString(R.string.manually_approves_followers), new ImageSpan(botIcon, ImageSpan.ALIGN_BASELINE), 0);
-//				username.setPaddingRelative(0,0,16,0);
-//				username.setText(ssb);
-//			}
-
-//			username.setCompoundDrawablesWithIntrinsicBounds(item.user.bot ? R.drawable.ic_fluent_bot_24_filled : 0, 0, 0, 0);
 
 			if (item.scheduledStatus!=null)
 				if (item.scheduledStatus.scheduledAt.isAfter(CreateStatus.DRAFTS_AFTER_INSTANT)) {

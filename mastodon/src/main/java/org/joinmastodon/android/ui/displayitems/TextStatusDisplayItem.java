@@ -114,22 +114,34 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 		@Override
 		public void onBind(TextStatusDisplayItem item){
 			if(!item.status.filterRevealed){
-//				text.setVisibility(View.GONE);
-//				spoilerTitle.setVisibility(View.GONE);
-//				spoilerTitleInline.setVisibility(View.GONE);
-//				spoilerHeader.setVisibility(View.GONE);
-//				spoilerOverlay.setVisibility(View.GONE);
-//				borderTop.setVisibility(View.GONE);
-//				borderBottom.setVisibility(View.GONE);
-//				textWrap.setVisibility(View.GONE);
-//				translateWrap.setVisibility(View.GONE);
-//				translateButton.setVisibility(View.GONE);
-//				translateInfo.setVisibility(View.GONE);
-//				translateProgress.setVisibility(View.GONE);
-				itemView.setVisibility(View.GONE);
+				text.setVisibility(View.GONE);
+				spoilerTitle.setVisibility(View.GONE);
+				spoilerTitleInline.setVisibility(View.GONE);
+				spoilerHeader.setVisibility(View.GONE);
+				spoilerOverlay.setVisibility(View.GONE);
+				borderTop.setVisibility(View.GONE);
+				borderBottom.setVisibility(View.GONE);
+				textWrap.setVisibility(View.GONE);
+				translateWrap.setVisibility(View.GONE);
+				translateButton.setVisibility(View.GONE);
+				translateInfo.setVisibility(View.GONE);
+				translateProgress.setVisibility(View.GONE);
+//				itemView.setVisibility(View.GONE);
 				return;
 			}else{
-				itemView.setVisibility(View.VISIBLE);
+				text.setVisibility(View.VISIBLE);
+				spoilerTitle.setVisibility(View.VISIBLE);
+				spoilerTitleInline.setVisibility(View.VISIBLE);
+				spoilerHeader.setVisibility(View.VISIBLE);
+				spoilerOverlay.setVisibility(View.VISIBLE);
+				borderTop.setVisibility(View.VISIBLE);
+				borderBottom.setVisibility(View.VISIBLE);
+				textWrap.setVisibility(View.VISIBLE);
+//				translateWrap.setVisibility(View.VISIBLE);
+//				translateButton.setVisibility(View.VISIBLE);
+//				translateInfo.setVisibility(View.VISIBLE);
+//				translateProgress.setVisibility(View.VISIBLE);
+//				itemView.setVisibility(View.VISIBLE);
 			}
 			text.setText(item.translated
 							? HtmlParser.parse(item.translation.content, item.status.emojis, item.status.mentions, item.status.tags, item.parentFragment.getAccountID())

@@ -60,6 +60,8 @@ public class Status extends BaseModel implements DisplayItemsParent{
 
 	public transient boolean spoilerRevealed;
 	public transient boolean hasGapAfter;
+
+	public transient boolean showFiltered = true;
 	private transient String strippedText;
 
 	@Override

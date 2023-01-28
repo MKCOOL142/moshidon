@@ -29,7 +29,7 @@ public class StatusFilterPredicate implements Predicate<Status>{
 			boolean matches=status.filtered.stream()
 					.map(filterResult->filterResult.filter)
 					.filter(filter->filter.expiresAt==null||filter.expiresAt.isAfter(Instant.now()))
-					.anyMatch(filter->filter.filterAction==Filter.FilterAction.HIDE);
+					.anyMatch(filter->filter.filterAction==Filter.FilterAction.HIDE || filter.filterAction==Filter.FilterAction.WARN);
 			return !matches;
 		}
 		for(Filter filter:filters){

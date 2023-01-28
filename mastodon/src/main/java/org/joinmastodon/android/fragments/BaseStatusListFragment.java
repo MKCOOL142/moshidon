@@ -502,6 +502,17 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		revealSpoiler(status, holder.getItemID());
 	}
 
+	protected void revealFiltered(Status status, String itemID){
+		status.filterRevealed =true;
+		TextStatusDisplayItem.Holder text=findHolderOfType(itemID, TextStatusDisplayItem.Holder.class);
+		if(text!=null)
+			adapter.notifyItemChanged(text.getAbsoluteAdapterPosition()-getMainAdapterOffset());
+		HeaderStatusDisplayItem.Holder header=findHolderOfType(itemID, HeaderStatusDisplayItem.Holder.class);
+		if(header!=null)
+			header.rebind();
+		updateImagesSpoilerState(status, itemID);
+	}
+
 	protected void revealSpoiler(Status status, String itemID){
 		status.spoilerRevealed=true;
 		TextStatusDisplayItem.Holder text=findHolderOfType(itemID, TextStatusDisplayItem.Holder.class);

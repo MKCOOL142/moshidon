@@ -143,4 +143,44 @@
 
 	</org.joinmastodon.android.ui.views.HeaderSubtitleLinearLayout>
 
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:minHeight="48dp"
+		android:visibility="visible"
+		android:gravity="center_vertical"
+		android:id="@+id/filter_spoiler"
+		android:layoutDirection="locale">
+
+		<TextView
+			android:id="@+id/text"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:layout_marginEnd="8dp"
+			android:paddingVertical="8dp"
+			android:gravity="center_vertical"
+			android:textColor="?android:textColorPrimary"
+			android:textSize="16sp" />
+
+		<Button
+			android:id="@+id/button"
+			android:layout_width="wrap_content"
+			android:layout_height="32dp"
+			android:layout_weight="0"
+			android:layout_marginEnd="16dp"
+			android:maxWidth="140dp"
+			android:background="@drawable/bg_button_new_posts"
+			android:elevation="0dp"
+			android:ellipsize="middle"
+			android:fontFamily="sans-serif-medium"
+			android:singleLine="true"
+			android:stateListAnimator="@null"
+			android:textColor="?android:textColorPrimary"
+			android:textSize="16sp"
+			tools:text="@string/sk_color_palette_pink" />
+
+	</LinearLayout>
+
 </RelativeLayout>
